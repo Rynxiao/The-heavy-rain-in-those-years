@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>那些年下过的大雨2</title>
+	<style>
+		body {
+			background: #000;
+			overflow: hidden;
+		}
+		#bgr {
+			position: absolute;
+			margin: auto;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+			background: -webkit-gradient(linear, left top, left bottom, from(#000), color-stop(#111), color-stop(#222), to(#000));
+		    background: linear-gradient(#000, #111, #222, #000);
+		}
+		#sploutch {
+			position: absolute;
+			width: 300px;
+			height: 300px;
+			animation: panSploutch 6s;
+		}
+		@keyframes panSploutch {
+			to {
+				transform: translateX(-300px);
+			}
+		}
+		/**
+		 * 雨滴
+		 * 下落过程透明度由0变为1
+		 * 高度由40px变为5px
+		 */
+		.drop {
+			position: absolute;
+			background: #fff;
+			width: 2px;
+			height: 40px;
+			opacity: 0;
+			left: 150px;
+			animation: fall 0.2s ease-in forwards;
+		}
+		@keyframes fall {
+			0% {
+				top: -100px;
+				opacity: 0;
+				height: 100px;
+			}
+			99% {
+				opacity: 1;
+			}
+			100% {
+				top: 150px;
+				opacity: 0;
+				height: 5px;
+			}
+		}
+		/**
+		 * 波纹
+		 * 沿X轴旋转75度，造成椭圆效果
+		 * 动画效果：
+		 * 中心定格，设置波纹延迟，波纹逐渐变大造成扩散效果
+		 * 先上在下再上，造成波纹的跌宕效果
+		 */
+		#ripples {
+			position: absolute;
+			width: 300px;
+			height: 300px;
+			transform: rotateX(75deg);
+		}
+		.ripple {
+			position: absolute;
+			margin: auto;
+			top: 0;
+			right: 0;
+			left: 0;
+			bottom: 0;
+			width: 1px;
+			height: 1px;
+			opacity: 0;
+			border-radius: 50%;
+			border: 6px solid rgba(255, 255, 255, 0.2);
+			animation: grow ease-in-out forwards 1;
+		}
+		.ripple:nth-child(1) {
+			animation-delay: 0s;
+			animation-duration: 2s;
+		}
+		.ripple:nth-child(2) {
+			animation-delay: 0.3s;
+			animation-duration: 2s;
+		}
+		.ripple:nth-child(3) {
+			animation-delay: 0.6s;
+			animation-duration: 2s;
+		}
+		@keyframes grow {
+			0% {
+				width: 1px;
+				height: 1px;
+				opacity: 0;
+				transform: translateY(20px);
+			}
+			25% {
+				opacity: 0.5;
+				transform: translateY(-10px);
+			}
+			50% {
+				transform: translateY(10px);
+			}
+			100% {
+				width: 250px;
+				height: 250px;
+				opacity: 0;
+				transform: translateY(0);
+			}
+		}
+		/**
+		 * 水花
+		 * 中心定位
+		 * 通过控制水花垂直方向位移，造成溅起效果
+		 * 通过控制水平方向便宜，造成运动效果
+		 */
+		.splash {
+			position: absolute;
+			margin: auto;
+			width: 4px;
+			height: 4px;
+			border-radius: 50%;
+			opacity: 0;
+			background: #fff;
+			animation-iteration-count: 1;
+			animation-fill-mode: forwards;
+			animation-timing-function: ease-in-out;
+			animation-duration: 1s;
+		}
+		.splash:nth-child(1) {
+			animation-name: bounce1;
+			animation-delay: 0.1s;
+		}
+		@keyframes bounce1 {
+			0% {
+				left: 150px;
+				top: 150px;
+				opacity: 0;
+			}
+			5% {
+				opacity: 0.5;
+			}
+			50% {
+				top: 104px;
+			}
+			100% {
+				left: 125px;
+				top: 150px;
+				opacity: 0;
+			}
+		}
+		.splash:nth-child(2) {
+			animation-name: bounce2;
+			animation-delay: 0.2s;
+		}
+		@keyframes bounce2 {
+			0% {
+				left: 150px;
+				top: 150px;
+				opacity: 0;
+			}
+			5% {
+				opacity: 0.5;
+			}
+			50% {
+				top: 112px;
+			}
+			100% {
+				left: 149px;
+		    	top: 150px;
+		    	opacity: 0;
+			}
+		}
+		.splash:nth-child(3) {
+			animation-name: bounce3;
+			animation-delay: 0.3s;
+		}
+		@keyframes bounce3 {
+		  	0% {
+			    left: 150px;
+			    top: 150px;
+			    opacity: 0;
+		  	}
+		  	5% {
+		    	opacity: .5;
+		  	}
+		  	50% {
+		    	top: 115px;
+		  	}
+		  	100% {
+		    	left: 192px;
+		    	top: 150px;
+		    	opacity: 0;
+		  	}
+		}
+	</style>
+</head>
+<body>
+	<div id="bgr">
+		<div id='lake'>
+		  	<div id='sploutch'>
+			    <div class='drop'></div>
+			    <div id='ripples'>
+			      	<div class='ripple'></div>
+			      	<div class='ripple'></div>
+			    </div>
+			    <div id='splashes'>
+			      	<div class='splash'></div>
+			      	<div class='splash'></div>
+			      	<div class='splash'></div>
+			    </div>
+		  	</div>
+		</div>
+	</div>
+	<script>
+		var HEIGHT,WIDTH;
+		var lake = document.getElementById("lake");
+		window.addEventListener('resize', handleResize, false);
+		handleResize();
+
+		function handleResize(){
+		  HEIGHT = window.innerHeight,
+		  WIDTH = window.innerWidth;
+		}
+
+		onmousedown = function(event){
+		  createRipples(event.pageX, event.pageY);
+		}
+
+		function createRipples(x,y){
+		  var tx = x || Math.random()*WIDTH;
+		  var ty = y || (Math.random()+.5)*HEIGHT*.5;
+		  var spltch = document.getElementById("sploutch");
+		  var cln = spltch.cloneNode(true);
+		  cln.style.left=(tx-150) +"px";
+		  cln.style.top=(ty-150) +"px";
+		  lake.appendChild(cln);
+		  // remove it from the dom after a while
+		  setTimeout(function(){
+		    lake.removeChild(cln);
+		  }, 4000);
+		}
+
+		setInterval(createRipples, 300);
+	</script>
+</body>
+</html>

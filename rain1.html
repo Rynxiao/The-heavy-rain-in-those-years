@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>那些年下过的</title>
+	<style>
+		html {
+			height: 100%;
+		}
+		body {
+			height: 100%;
+			margin: 0;
+			overflow: hidden;
+			background: linear-gradient(to bottom, #202020, #111119)
+		}
+		.rain {
+			position: absolute;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 2;
+		}
+		.rain.back-row {
+			display: none;
+			z-index: 1;
+			bottom: 60px;
+			opacity: 0.5;
+		}
+		body.back-row-toggle .rain.back-row {
+			display: block;
+		}
+		/**
+		 * 雨滴容器
+		 * 宽度为15px，高度为120px
+		 * 0.5秒内从屏幕上方移动到屏幕90%的高度
+		 * 模仿雨滴的下降过程
+		 */
+		.drop {
+			position: absolute;
+			bottom: 100%;
+			width: 15px;
+			height: 120px;
+			pointer-events: none;
+			animation: drop 0.5s linear infinite;
+		}
+		@keyframes drop {
+			0% {
+				transform: translateY(0vh);
+			}
+			75% {
+				transform: translateY(90vh);
+			}
+			100% {
+				transform: translateY(90vh);
+			}
+		}
+		/**
+		 * 雨滴
+		 * 宽度为1px，高度为120 * 0.6 = 72px
+		 * 设置从上到下的渐变色，模仿雨滴划过的轨迹
+		 * 0.5s内由不透明变为透明，模仿雨滴下落碰撞到物体之后消失的情景
+		 */
+		.stem {
+			width: 1px;
+			height: 60%;
+			margin-left: 7px;
+			background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.25));
+			animation: stem 0.5s linear infinite;
+		}
+		@keyframes stem {
+			0% {
+				opacity: 1;
+			}
+			65% {
+				opacity: 1;
+			}
+			75% {
+				opacity: 0;
+			}
+			100% {
+				opacity: 0;
+			}
+		}
+		/**
+		 * 水花
+		 * 雨滴碰撞到地面会溅起水花
+		 * 宽度为15px，高度为10px
+		 * 设置上边框为点状，加上设置圆角，模拟水花溅起时的弧形
+		 * 设置动画，当雨滴下降到地面时，透明度设置为1，同时通过设置缩放
+		 * 模拟水花放大的过程
+		 */
+		.splat {
+			width: 15px;
+			height: 10px;
+			border-top: 2px dotted rgba(255, 255, 255, 0.5);
+			border-radius: 50%;
+			opacity: 1;
+			transform: scale(0);
+			animation: splat 0.5s linear infinite;
+			/*display: none;*/
+		}
+		@keyframes splat {
+			0% {
+				opacity: 1;
+				transform: scale(0);
+			}
+			80% {
+				opacity: 1;
+				transform: scale(0);
+			}
+			90% {
+				opacity: 0.5;
+				transform: scale(1);
+			}
+			100% {
+				opacity: 0;
+				transform: scale(1.5);
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="rain front-row"></div>
+	<div class="rain back-row"></div>
+	<script src="https://cdn.bootcss.com/jquery/2.2.1/jquery.slim.min.js"></script>
+	<script>
+		var makeItRain = function() {
+		  	//clear out everything
+		  	$('.rain').empty();
+
+		  	var increment = 0;
+		  	var drops = "";
+		  	var backDrops = "";
+
+		  	while (increment < 100) {
+				//couple random numbers to use for various randomizations
+				//random number between 98 and 1
+				var randoHundo = (Math.floor(Math.random() * (98 - 1 + 1) + 1));
+				//random number between 5 and 2
+				var randoFiver = (Math.floor(Math.random() * (5 - 2 + 1) + 2));
+				//increment
+				increment += randoFiver;
+				//add in a new raindrop with various randomizations to certain CSS properties
+				drops += '<div class="drop" style="left: ' + increment + '%; bottom: ' + (randoFiver + randoFiver - 1 + 100) + '%; animation-delay: 0.' + randoHundo + 's; animation-duration: 0.5' + randoHundo + 's;"><div class="stem" style="animation-delay: 0.' + randoHundo + 's; animation-duration: 0.5' + randoHundo + 's;"></div><div class="splat" style="animation-delay: 0.' + randoHundo + 's; animation-duration: 0.5' + randoHundo + 's;"></div></div>';
+				backDrops += '<div class="drop" style="right: ' + increment + '%; bottom: ' + (randoFiver + randoFiver - 1 + 100) + '%; animation-delay: 0.' + randoHundo + 's; animation-duration: 0.5' + randoHundo + 's;"><div class="stem" style="animation-delay: 0.' + randoHundo + 's; animation-duration: 0.5' + randoHundo + 's;"></div><div class="splat" style="animation-delay: 0.' + randoHundo + 's; animation-duration: 0.5' + randoHundo + 's;"></div></div>';
+		  	}
+
+		  	$('.rain.front-row').append(drops);
+		  	$('.rain.back-row').append(backDrops);
+		}
+
+		makeItRain();
+	</script>
+</body>
+</html>
